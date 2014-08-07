@@ -97,7 +97,7 @@ module.exports = utils.extend(new EventEmitter(), {
 				self.locate(folder, callback);
 			},
 			function(projects, callback) {
-				async.each(projects, function(project, callback) {
+				async.eachSeries(projects, function(project, callback) {
 					self.importProject(utils.extend({}, project, configs[project.name] || configs[project.project]), callback);
 				}, callback);
 			}

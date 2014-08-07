@@ -94,6 +94,10 @@ module.exports = function(grunt) {
 		return fileSet;
 	}
 
+	importer.on('import', function(project) {
+		grunt.log.writeln('Importing ', project.prefix.green, ' to ', project.dest.yellow);
+	});
+
 	grunt.registerMultiTask('site-import', 'Импорт статических сайтов в указанную папку', function() {
 		this.requiresConfig('site-import');
 		var config = this.data;
