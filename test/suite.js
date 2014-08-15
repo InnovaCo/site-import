@@ -38,7 +38,7 @@ function p(dst) {
 
 describe('Project importer', function() {
 	before(function() {
-		del.sync(['out*/**/*.*'], {cwd: __dirname});
+		del.sync(['out{1,2}/**/*.*'], {cwd: __dirname});
 	});
 
 	it('simple projects', function(done) {
