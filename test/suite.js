@@ -19,7 +19,7 @@ function compare(folder1, folder2) {
 	var list1 = glob.sync('**/*.*', {cwd: folder1}).sort();
 	var list2 = glob.sync('**/*.*', {cwd: folder2}).sort();
 
-	assert.deepEqual(list1, list2, 'Comparing contents of ' + folder1 + ' and ' + folder2);
+	assert.deepEqual(list1, list2, 'Comparing contents:\n' + folder1 + '\n' + list1.join('\n') + '\n   and\n\n' + folder2 + '\n' + list2.join('\n'));
 
 	// compare file contents
 	list1.forEach(function(f) {
