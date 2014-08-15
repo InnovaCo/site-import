@@ -38,7 +38,7 @@ function p(dst) {
 
 describe('Project importer', function() {
 	before(function() {
-		del.sync(['out1/**/*.*', 'out2/**/*.*'], {cwd: __dirname});
+		del.sync(['out*/**/*.*'], {cwd: __dirname});
 	});
 
 	it('simple projects', function(done) {
@@ -79,5 +79,8 @@ describe('Project importer', function() {
 		compare(p('out-html'), p('fixtures/html'));
 		compare(p('out-import1'), p('fixtures/html/p1'));
 		compare(p('out-import2'), p('fixtures/html/p2'));
+
+		// direct project import
+		compare(p('out3'), p('fixtures/out3'));
 	});
 });

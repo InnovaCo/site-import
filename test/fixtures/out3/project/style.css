@@ -1,0 +1,8 @@
+body {
+	padding: 30px;
+	margin: 0;
+}
+
+h1:after {
+	content: url(/-/00fd7eb3/project/img/smiley.png);
+}

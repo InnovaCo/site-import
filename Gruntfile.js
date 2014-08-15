@@ -15,6 +15,16 @@ module.exports = function(grunt) {
 				}
 			}
 		},
+		'project-import': {
+			main: {
+				src: './test/sample-project2',
+				dest: './test/out3/project',
+				destRoot: './test/out3',
+				rewriteScheme: function(data) {
+					return '/-/' + data.version + data.url;
+				}
+			}
+		},
 		'html-import': {
 			main: {
 				src: ['**/*.html'],
@@ -38,5 +48,5 @@ module.exports = function(grunt) {
 		}
 	});
 
-	grunt.registerTask('test', ['site-import', 'html-import']);
+	grunt.registerTask('test', ['site-import', 'project-import', 'html-import']);
 };

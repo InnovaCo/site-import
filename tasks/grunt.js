@@ -48,6 +48,15 @@ module.exports = function(grunt) {
 		return result;
 	}
 
+	function createRewriteConfig(project) {
+		var destBaseDir = path.resolve(project.destRoot || project.dest);
+		var destDir = path.resolve(project.dest);
+		return {
+			root: path.resolve(project.srcRoot || project.src),
+			prefix: '/' + path.relative(destBaseDir, destDir)
+		};
+	}
+
 	function saveFiles(files, dest, callback) {
 		async.each(files, function(fileObj, callback) {
 			utils.file.save(path.join(dest, fileObj.file), fileObj.content, callback);
@@ -94,12 +103,27 @@ module.exports = function(grunt) {
 		return fileSet;
 	}
 
-	importer.on('import', function(project) {
-		grunt.log.writeln('Importing ', project.prefix.green, ' to ', project.dest.yellow);
-	});
+	var setupLogger = (function() {
+		var attached = false;
+		return function() {
+			if (attached) {
+				return;
+			}
 
+			importer.on('import', function(project) {
+				grunt.log.writeln('Importing ', project.prefix.green, ' to ', project.dest.yellow);
+			});
+			attached = true;
+		};
+	})();
+
+	/**
+	 * Импорт сайта в указанную папку.
+	 * Находит все симлинки на подсайты внутри `src` и использует 
+	 * эту информацию для переноса сайта в папку `dest` с последущей перезаписью 
+	 * ссылок на файлы (CSS, JS и т.д.)
+	 */
 	grunt.registerMultiTask('site-import', 'Импорт статических сайтов в указанную папку', function() {
-		this.requiresConfig('site-import');
 		var config = this.data;
 		
 		// проверим, чтобы все данные были на месте
@@ -114,8 +138,52 @@ module.exports = function(grunt) {
 		importer.defaults(extractDefaultConfig(config));
 
 		var done = this.async();
+		setupLogger();
 		importer.importFrom(config.src, this.options(), function(err) {
 			importer.defaults(oldDefaults, true);
+			if (err) {
+				grunt.fatal(err);
+				done(false);
+			}
+
+			done();
+		});
+	});
+
+	/**
+	 * Импорт проекта в указанную папку.
+	 * Является «облегчённой» версией задачи `site-import`: в отличие от неё
+	 * поиск симлинков не осуществляется, а просто копирюется файлы из
+	 * папки `src` в папку `dest` с перезаписью ресурсов и опциональным наложением 
+	 * XSL-шаблона.
+	 *
+	 * Так как из-за отсутствия симлинков будет отсутствовать информация, 
+	 * необходимая для корректного импорта, эта задача принимает дополнительные
+	 * параметры:
+	 * - srcRoot: путь к корню импортируемого проекта. Если указан, все абсолютные
+	 *   ссылки внутри документов будут высчитаны относительно этой папки. Если не указан,
+	 *   корнем считается путь в параметре `src`
+	 * - destRoot: путь к корню основного, в который импортируется подпроект. 
+	 *   Используется для получения префикса перезаписанных ссылок (то есть используется
+	 *   в формировании конечной ссылки на ресурс). Если не указан, берётся значение `dest`
+	 */
+	grunt.registerMultiTask('project-import', 'Импорт проекта в указанную папку', function() {
+		var config = this.data;
+		
+		// проверим, чтобы все данные были на месте
+		if (!config.src) {
+			return grunt.fatal('Не указан параметр "src"');
+		}
+		if (!config.dest) {
+			return grunt.fatal('Не указан параметр "dest"');
+		}
+
+		// подготовим конфиг для импорта проекта
+		var rewriteConfig = createRewriteConfig(config);
+		utils.extend(config, rewriteConfig);
+
+		var done = this.async();
+		importer.importProject(config, function(err) {
 			if (err) {
 				grunt.fatal(err);
 				done(false);
