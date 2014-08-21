@@ -3,7 +3,6 @@ var path = require('path');
 var assert = require('assert');
 var glob = require('glob-all');
 var crc = require('crc').crc32;
-var grunt = require('grunt');
 var del = require('del');
 var importer = require('../');
 
