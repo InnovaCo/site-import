@@ -11,10 +11,10 @@
   "dependencies": {
     "async": "^0.9.0",
     "crc": "^2.1.1",
-    "css-importer": "git+https://github.com/InnovaCo/css-importer.git#v1.0.0",
+    "css-importer": "git+https://github.com/InnovaCo/css-importer.git#v1.0.1",
     "findit": "^2.0.0",
     "glob-all": "^2.4.1",
-    "html-importer": "git+https://github.com/InnovaCo/html-importer.git#v1.0.0",
+    "html-importer": "git+https://github.com/InnovaCo/html-importer.git#v1.0.1",
     "importer-utils": "git+https://github.com/InnovaCo/importer-utils.git#v1.0.0"
   },
   "devDependencies": {
