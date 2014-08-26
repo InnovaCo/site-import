@@ -9,7 +9,7 @@ var importer = require('../');
 function normalize(text) {
 	return text.split(/\r?\n/)
 		.map(function(line) {
-			return line.trim()
+			return line.trim();
 		})
 		.join('\n');
 }
@@ -24,10 +24,7 @@ function compare(folder1, folder2) {
 	list1.forEach(function(f) {
 		var content1 = fs.readFileSync(path.join(folder1, f), 'utf8');
 		var content2 = fs.readFileSync(path.join(folder2, f), 'utf8');
-		var hash1 = crc(normalize(content1));
-		var hash2 = crc(normalize(content2));
-
-		assert.equal(hash1, hash2, 'Comparing ' + f + ':\n\n' + content1 + '\n----------\n' + content2);
+		assert.equal(content1, content2, f);
 	});
 }
 
@@ -40,12 +37,15 @@ describe('Project importer', function() {
 		del.sync(['out{1,2}/**/*.*'], {cwd: __dirname});
 	});
 
-	it('simple projects', function(done) {
-		importer.defaults({
-			out: p('out1')
-		});
+	importer.defaults({
+		xsl: {
+			src: 'main.xsl', 
+			cwd: path.join(path.dirname(__dirname), 'xsl')
+		}
+	});
 
-		importer.importFrom(p('in'), function(err) {
+	it('simple projects', function(done) {
+		importer.importFrom(p('in'), {dest: p('out1')}, function(err) {
 			assert(!err);
 			compare(p('out1/p1'), p('fixtures/out1/p1'));
 			compare(p('out1/p2'), p('fixtures/out1/p2'));
@@ -54,14 +54,12 @@ describe('Project importer', function() {
 	});
 
 	it('projects with resource versioning', function(done) {
-		importer.defaults({
-			out: p('out2'),
+		importer.importFrom(p('in'), {
+			dest: p('out2'),
 			rewriteScheme: function(data) {
 				return '/-/' + data.version + data.url;
 			}
-		});
-
-		importer.importFrom(p('in'), function(err) {
+		}, function(err) {
 			assert(!err);
 			compare(p('out2/p1'), p('fixtures/out2/p1'));
 			compare(p('out2/p2'), p('fixtures/out2/p2'));

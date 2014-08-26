@@ -57,12 +57,6 @@ module.exports = function(grunt) {
 		};
 	}
 
-	function saveFiles(files, dest, callback) {
-		async.each(files, function(fileObj, callback) {
-			utils.file.save(path.join(dest, fileObj.file), fileObj.content, callback);
-		}, callback);
-	}
-
 	function normalizeFileSet(files, dest) {
 		var fileSet = [];
 		var fileSetLookup = {};
@@ -134,13 +128,9 @@ module.exports = function(grunt) {
 			return grunt.fatal('Не указан параметр "dest"');
 		}
 
-		var oldDefaults = importer.defaults();
-		importer.defaults(extractDefaultConfig(config));
-
 		var done = this.async();
 		setupLogger();
-		importer.importFrom(config.src, this.options(), function(err) {
-			importer.defaults(oldDefaults, true);
+		importer.importFrom(path.resolve(config.src), utils.extend({}, config, this.options()), function(err) {
 			if (err) {
 				grunt.fatal(err);
 				done(false);
@@ -178,12 +168,14 @@ module.exports = function(grunt) {
 			return grunt.fatal('Не указан параметр "dest"');
 		}
 
+		config.cwd = path.resolve(config.src);
+
 		// подготовим конфиг для импорта проекта
-		var rewriteConfig = createRewriteConfig(config);
-		utils.extend(config, rewriteConfig);
+		// var rewriteConfig = createRewriteConfig(config);
+		// utils.extend(config, rewriteConfig);
 
 		var done = this.async();
-		importer.importProject(config, function(err) {
+		importer.importProject(utils.extend({}, config, this.options()), function(err) {
 			if (err) {
 				grunt.fatal(err);
 				done(false);
@@ -196,7 +188,6 @@ module.exports = function(grunt) {
 	grunt.registerMultiTask('html-import', 'Импорт HTML-файлов в указанную папку', function() {
 		var fileSet = normalizeFileSet(this.files, this.data.dest);
 		var options = this.options();
-		
 		var importer = htmlImporter(options);
 
 		if (options.rewriteUrl) {
@@ -218,7 +209,10 @@ module.exports = function(grunt) {
 					importer.run(fset, callback);
 				},
 				function(files, callback) {
-					saveFiles(files, fset.dest, callback);
+					files.forEach(function(file) {
+						file.save(fset.dest);
+					});
+					callback();
 				}
 			], callback);
 		}, function(err) {

@@ -5,9 +5,9 @@ module.exports = function(grunt) {
 			main: {
 				src: './test/in',
 				dest: './test/out-grunt',
+				xsl: {src: 'main.xsl', cwd: 'xsl'},
 				options: {
-					'sample-project': {
-						xsl: {src: 'main.xsl', cwd: 'xsl'},
+					'demo-project': {
 						rewriteScheme: function(data) {
 							return '/-/' + data.version + data.url;
 						}
@@ -18,8 +18,9 @@ module.exports = function(grunt) {
 		'project-import': {
 			main: {
 				src: './test/sample-project2',
-				dest: './test/out3/project',
-				destRoot: './test/out3',
+				dest: './test/out3',
+				prefix: '/project',
+				xsl: {src: 'main.xsl', cwd: 'xsl'},
 				rewriteScheme: function(data) {
 					return '/-/' + data.version + data.url;
 				}
