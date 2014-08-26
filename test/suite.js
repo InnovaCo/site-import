@@ -24,7 +24,7 @@ function compare(folder1, folder2) {
 	list1.forEach(function(f) {
 		var content1 = fs.readFileSync(path.join(folder1, f), 'utf8');
 		var content2 = fs.readFileSync(path.join(folder2, f), 'utf8');
-		assert.equal(content1, content2, f);
+		assert.equal(normalize(content1), normalize(content2), f);
 	});
 }
 
