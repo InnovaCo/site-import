@@ -14,7 +14,8 @@
     "css-importer": "git+https://github.com/InnovaCo/css-importer.git#v1.0.2",
     "findit": "^2.0.0",
     "glob-all": "^2.4.1",
-    "html-importer": "git+https://github.com/InnovaCo/html-importer.git#v1.0.3",
+    "graceful-fs": "^3.0.2",
+    "html-importer": "git+https://github.com/InnovaCo/html-importer.git#v1.0.4",
     "importer-utils": "git+https://github.com/InnovaCo/importer-utils.git#v1.0.1"
   },
   "devDependencies": {
