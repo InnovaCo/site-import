@@ -1,6 +1,6 @@
 {
   "name": "site-import",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Импорт подсайтов в 4game",
   "main": "index.js",
   "scripts": {
@@ -15,7 +15,7 @@
     "findit": "^2.0.0",
     "glob-all": "^2.4.1",
     "graceful-fs": "^3.0.2",
-    "html-importer": "git+https://github.com/InnovaCo/html-importer.git#v1.0.6",
+    "html-importer": "git+https://github.com/InnovaCo/html-importer.git#v1.0.7",
     "importer-utils": "git+https://github.com/InnovaCo/importer-utils.git#v1.0.2"
   },
   "devDependencies": {
